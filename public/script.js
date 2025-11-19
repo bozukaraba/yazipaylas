@@ -1,7 +1,7 @@
 // Backend URL yapılandırması
 const BACKEND_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3001' 
-    : 'https://yazipaylas-backend.onrender.com'; // Render.com üzerinden deploy edilecek
+    : 'https://yazipaylas-backendd.onrender.com'; // Render.com üzerinden deploy edilecek
 
 const socket = io(BACKEND_URL, {
     transports: ['websocket', 'polling'],
