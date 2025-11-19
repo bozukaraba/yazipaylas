@@ -1,13 +1,17 @@
 // Backend URL yapılandırması
 const BACKEND_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3001' 
-    : 'https://yazipaylas-backendd.onrender.com'; // Render.com üzerinden deploy edilecek
+    : 'https://yazipaylas-backendd.onrender.com';
+
+console.log('🔌 Backend URL:', BACKEND_URL);
+console.log('🌐 Hostname:', window.location.hostname);
 
 const socket = io(BACKEND_URL, {
     transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionDelay: 1000,
-    reconnectionAttempts: 10
+    reconnectionAttempts: 10,
+    timeout: 20000
 });
 
 const editor = document.getElementById('editor');
@@ -19,17 +23,33 @@ let lastContent = '';
 
 // Socket.IO bağlantı olayları
 socket.on('connect', () => {
+    console.log('✅ Socket bağlandı! ID:', socket.id);
     statusEl.textContent = 'Bağlandı';
     statusEl.classList.add('connected');
 });
 
-socket.on('disconnect', () => {
-    statusEl.textContent = 'Bağlantı kesildi';
+socket.on('disconnect', (reason) => {
+    console.log('❌ Socket bağlantısı kesildi. Sebep:', reason);
+    statusEl.textContent = 'Bağlantı kesildi - Yeniden bağlanılıyor...';
     statusEl.classList.remove('connected');
+});
+
+socket.on('connect_error', (error) => {
+    console.error('❌ Bağlantı hatası:', error.message);
+    statusEl.textContent = 'Bağlantı hatası - Tekrar deneniyor...';
+});
+
+socket.on('reconnect', (attemptNumber) => {
+    console.log('🔄 Yeniden bağlanıldı! Deneme:', attemptNumber);
+});
+
+socket.on('reconnect_attempt', (attemptNumber) => {
+    console.log('🔄 Yeniden bağlanma denemesi:', attemptNumber);
 });
 
 // Belgeyi yükle
 socket.on('load-document', (data) => {
+    console.log('📄 Belge yüklendi, içerik uzunluğu:', data.content.length);
     isUpdating = true;
     editor.innerHTML = data.content;
     lastContent = data.content;
@@ -38,6 +58,7 @@ socket.on('load-document', (data) => {
 
 // İçerik güncellemesi
 socket.on('content-update', (data) => {
+    console.log('📝 İçerik güncellendi, uzunluk:', data.content.length);
     if (!isUpdating && data.content !== lastContent) {
         isUpdating = true;
         const selection = saveSelection();
@@ -50,6 +71,7 @@ socket.on('content-update', (data) => {
 
 // Kullanıcı sayısı
 socket.on('user-count', (count) => {
+    console.log('👥 Aktif kullanıcı sayısı:', count);
     userCountEl.textContent = `Aktif Kullanıcı: ${count}`;
 });
 
@@ -63,6 +85,7 @@ editor.addEventListener('input', () => {
         typingTimer = setTimeout(() => {
             const content = editor.innerHTML;
             if (content !== lastContent) {
+                console.log('📤 İçerik gönderiliyor, uzunluk:', content.length);
                 lastContent = content;
                 socket.emit('content-change', {
                     content: content
@@ -79,6 +102,7 @@ editor.addEventListener('paste', (e) => {
     for (let item of items) {
         if (item.type.indexOf('image') !== -1) {
             e.preventDefault();
+            console.log('🖼️ Görsel yapıştırılıyor...');
             const blob = item.getAsFile();
             const reader = new FileReader();
             
@@ -106,6 +130,7 @@ editor.addEventListener('paste', (e) => {
                 // İçerik güncellemesini hemen gönder
                 setTimeout(() => {
                     const content = editor.innerHTML;
+                    console.log('📤 Görsel ile içerik gönderiliyor');
                     lastContent = content;
                     socket.emit('content-change', {
                         content: content
