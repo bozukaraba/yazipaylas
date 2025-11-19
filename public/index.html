@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yazı Paylaş - İşbirlikçi Belge Editörü</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Yazı Paylaş</h1>
+            <div class="header-info">
+                <span id="user-count" class="badge">Aktif Kullanıcı: 1</span>
+                <span class="badge info">Ctrl+V ile görsel yapıştırabilirsiniz</span>
+            </div>
+        </header>
+        
+        <div class="toolbar">
+            <button id="bold-btn" title="Kalın (Ctrl+B)"><b>B</b></button>
+            <button id="italic-btn" title="İtalik (Ctrl+I)"><i>I</i></button>
+            <button id="underline-btn" title="Altı Çizili (Ctrl+U)"><u>U</u></button>
+            <div class="divider"></div>
+            <button id="left-align" title="Sola Hizala">≡</button>
+            <button id="center-align" title="Ortala">≣</button>
+            <button id="right-align" title="Sağa Hizala">≡</button>
+            <div class="divider"></div>
+            <select id="font-size">
+                <option value="14">14px</option>
+                <option value="16" selected>16px</option>
+                <option value="18">18px</option>
+                <option value="20">20px</option>
+                <option value="24">24px</option>
+                <option value="32">32px</option>
+            </select>
+            <div class="divider"></div>
+            <button id="clear-btn" title="Temizle">🗑️ Temizle</button>
+        </div>
+        
+        <div id="editor" contenteditable="true" spellcheck="true">
+            
+        </div>
+        
+        <footer>
+            <span class="status" id="status">Bağlantı kuruluyor...</span>
+        </footer>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

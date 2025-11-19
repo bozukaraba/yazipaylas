@@ -1,0 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 900px;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-info {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    backdrop-filter: blur(10px);
+}
+
+.badge.info {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.toolbar button {
+    background: white;
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    min-width: 36px;
+}
+
+.toolbar button:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-1px);
+}
+
+.toolbar button:active {
+    transform: translateY(0);
+}
+
+.toolbar select {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background: #dee2e6;
+    margin: 0 4px;
+}
+
+#editor {
+    flex: 1;
+    padding: 40px;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-y: auto;
+    outline: none;
+    background: white;
+    color: #333;
+    min-height: 400px;
+}
+
+#editor:empty::before {
+    content: 'Yazmaya başlayın veya bir görsel yapıştırın (Ctrl+V)...';
+    color: #adb5bd;
+    font-style: italic;
+}
+
+#editor img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background: #f8f9fa;
+    padding: 12px 30px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.status.connected {
+    color: #28a745;
+}
+
+.status.connected::before {
+    content: '● ';
+}
+
+/* Scroll bar stilleri */
+#editor::-webkit-scrollbar {
+    width: 8px;
+}
+
+#editor::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#editor::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 4px;
+}
+
+#editor::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        border-radius: 8px;
+    }
+    
+    header h1 {
+        font-size: 20px;
+    }
+    
+    #editor {
+        padding: 20px;
+    }
+}
