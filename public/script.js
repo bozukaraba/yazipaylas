@@ -15,6 +15,7 @@ const statusEl = document.getElementById('status');
 const userCountEl = document.getElementById('user-count');
 
 let isUpdating = false;
+let lastContent = '';
 
 // Socket.IO bağlantı olayları
 socket.on('connect', () => {
@@ -29,26 +30,22 @@ socket.on('disconnect', () => {
 
 // Belgeyi yükle
 socket.on('load-document', (data) => {
+    isUpdating = true;
     editor.innerHTML = data.content;
+    lastContent = data.content;
+    setTimeout(() => { isUpdating = false; }, 100);
 });
 
 // İçerik güncellemesi
 socket.on('content-update', (data) => {
-    isUpdating = true;
-    const selection = saveSelection();
-    editor.innerHTML = data.content;
-    restoreSelection(selection);
-    isUpdating = false;
-});
-
-// Görsel eklendi
-socket.on('image-added', (data) => {
-    isUpdating = true;
-    const img = document.createElement('img');
-    img.src = data.imageData;
-    img.alt = 'Yapıştırılan görsel';
-    editor.appendChild(img);
-    isUpdating = false;
+    if (!isUpdating && data.content !== lastContent) {
+        isUpdating = true;
+        const selection = saveSelection();
+        editor.innerHTML = data.content;
+        lastContent = data.content;
+        restoreSelection(selection);
+        setTimeout(() => { isUpdating = false; }, 100);
+    }
 });
 
 // Kullanıcı sayısı
@@ -56,12 +53,22 @@ socket.on('user-count', (count) => {
     userCountEl.textContent = `Aktif Kullanıcı: ${count}`;
 });
 
-// İçerik değişikliğini algıla
+// İçerik değişikliğini algıla ve gönder
+let typingTimer;
+const typingDelay = 300; // 300ms debounce
+
 editor.addEventListener('input', () => {
     if (!isUpdating) {
-        socket.emit('content-change', {
-            content: editor.innerHTML
-        });
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            const content = editor.innerHTML;
+            if (content !== lastContent) {
+                lastContent = content;
+                socket.emit('content-change', {
+                    content: content
+                });
+            }
+        }, typingDelay);
     }
 });
 
@@ -96,15 +103,14 @@ editor.addEventListener('paste', (e) => {
                     editor.appendChild(img);
                 }
                 
-                // Görseli diğer kullanıcılara gönder
-                socket.emit('add-image', {
-                    imageData: event.target.result
-                });
-                
-                // İçerik güncellemesini gönder
-                socket.emit('content-change', {
-                    content: editor.innerHTML
-                });
+                // İçerik güncellemesini hemen gönder
+                setTimeout(() => {
+                    const content = editor.innerHTML;
+                    lastContent = content;
+                    socket.emit('content-change', {
+                        content: content
+                    });
+                }, 100);
             };
             
             reader.readAsDataURL(blob);

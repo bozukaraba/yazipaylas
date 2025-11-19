@@ -14,7 +14,6 @@ const io = socketIo(server, {
 
 // Belge içeriğini bellekte tut
 let documentContent = '';
-let documentImages = [];
 
 app.use(express.static('public'));
 
@@ -26,21 +25,16 @@ io.on('connection', (socket) => {
   console.log('Yeni kullanıcı bağlandı:', socket.id);
   
   // Yeni kullanıcıya mevcut içeriği gönder
-  socket.emit('load-document', { content: documentContent, images: documentImages });
+  socket.emit('load-document', { content: documentContent });
   
   // Kullanıcı sayısını gönder
   io.emit('user-count', io.engine.clientsCount);
   
-  // İçerik değişikliği
+  // İçerik değişikliği - tüm içeriği senkronize et
   socket.on('content-change', (data) => {
     documentContent = data.content;
+    // Gönderen hariç tüm kullanıcılara ilet
     socket.broadcast.emit('content-update', data);
-  });
-  
-  // Görsel ekleme
-  socket.on('add-image', (data) => {
-    documentImages.push(data);
-    socket.broadcast.emit('image-added', data);
   });
   
   // Kullanıcı ayrıldı
