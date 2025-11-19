@@ -1,4 +1,15 @@
-const socket = io();
+// Backend URL yapılandırması
+const BACKEND_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001' 
+    : 'https://yazipaylas-backend.onrender.com'; // Render.com üzerinden deploy edilecek
+
+const socket = io(BACKEND_URL, {
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionAttempts: 10
+});
+
 const editor = document.getElementById('editor');
 const statusEl = document.getElementById('status');
 const userCountEl = document.getElementById('user-count');
